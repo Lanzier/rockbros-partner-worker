@@ -13,7 +13,4 @@ jobs:
       - name: Resume active server job
         run: |
           curl --fail-with-body --retry 3 --retry-all-errors \
-            -X POST \
-            -H "content-type: application/json" \
-            --data '{"action":"wake"}' \
-            https://zier-bike-lead-demo.mauve-stork-8859.chatgpt.site/api/email-jobs
+            "https://zier-bike-lead-demo.mauve-stork-8859.chatgpt.site/api/email-jobs?wake=1"
