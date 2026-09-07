@@ -1,0 +1,19 @@
+name: Wake email enrichment
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  wake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Resume active server job
+        run: |
+          curl --fail-with-body --retry 3 --retry-all-errors \
+            -X POST \
+            -H "content-type: application/json" \
+            --data '{"action":"wake"}' \
+            https://zier-bike-lead-demo.mauve-stork-8859.chatgpt.site/api/email-jobs
