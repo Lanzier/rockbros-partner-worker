@@ -2,15 +2,23 @@ name: Wake email enrichment
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "15 */4 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: persistent-email-enrichment-worker
+  cancel-in-progress: false
 
 jobs:
   wake:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 255
     steps:
-      - name: Resume active server job
+      - name: Keep persisted jobs moving
         run: |
-          curl --fail-with-body --retry 3 --retry-all-errors \
-            "https://zier-bike-lead-demo.mauve-stork-8859.chatgpt.site/api/email-jobs?wake=1"
+          end=$((SECONDS + 15000))
+          while [ "$SECONDS" -lt "$end" ]; do
+            curl --silent --show-error --fail-with-body --retry 3 --retry-all-errors \
+              "https://zier-bike-lead-demo.mauve-stork-8859.chatgpt.site/api/email-jobs?wake=1" >/dev/null
+            sleep 30
+          done
